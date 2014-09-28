@@ -193,9 +193,9 @@ static const H5Z_class2_t H5Z_SZIP = {
     1,              /* encoder_present flag (set to true) */
     1,              /* decoder_present flag (set to true) */
     "szip",                  /* Filter name for debugging    */
-    NULL,                       /* The "can apply" callback     */ 
-    NULL,        /* The "set local" callback     */
-    (H5Z_func_t)NULL, /* The actual filter function */
+    NULL,                       /* The "can apply" callback     */
+    NULL,                       /* The "set local" callback     */
+    (H5Z_func_t)NULL
 };
 
 static int
@@ -234,8 +234,6 @@ szip_inq(const NC_COMPRESSOR* info, hid_t propid, size_t argc, unsigned int* arg
    return THROW(NC_NOERR);
 #undef CD_NELEMS_SZIP
 }
-
-/* end H5Z_set_local_szip() */
 
 #endif /*SZIP_COMPRESSION*/
 
