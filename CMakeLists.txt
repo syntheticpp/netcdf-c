@@ -638,10 +638,15 @@ IF(USE_HDF5 OR ENABLE_NETCDF_4)
 
   # Assert HDF5 version.
   SET(HDF5_VERSION_REQUIRED 1.8.6)
-  execute_process(COMMAND sh -c "h5cc -showconfig | grep -i \"HDF5 version\" | sed 's/^.*[^0-9]\\([0-9]*\\.[0-9]*\\.[0-9]*\\).*$/\\1/'"
-    OUTPUT_VARIABLE HDF5_VERSION
-    ERROR_QUIET
-    )
+  if(HDF5_VERSION_STRING)
+    set(HDF5_VERSION ${HDF5_VERSION_STRING})
+    set(HDF5_INCLUDE_DIRS ${HDF5_INCLUDE_DIR})
+  else()
+      execute_process(COMMAND sh -c "h5cc -showconfig | grep -i \"HDF5 version\" | sed 's/^.*[^0-9]\\([0-9]*\\.[0-9]*\\.[0-9]*\\).*$/\\1/'"
+        OUTPUT_VARIABLE HDF5_VERSION
+        ERROR_QUIET
+        )
+  endif()
   
   # It cannot be assumed that libhdf5.settings exists.  If it doesn't,
   # the call to h5cc will have failed.  At this point we will have to
@@ -653,6 +658,8 @@ IF(USE_HDF5 OR ENABLE_NETCDF_4)
     IF(${HDF5_VERSION} VERSION_LESS ${HDF5_VERSION_REQUIRED})
       MESSAGE(FATAL_ERROR
         "netCDF requires at least HDF5 ${HDF5_VERSION_REQUIRED}. Found ${HDF5_VERSION}.")
+    else()
+      MESSAGE(STATUS "Using HDF5 ${HDF5_VERSION}.")
     ENDIF()
   ENDIF()
 
@@ -949,6 +956,8 @@ CHECK_INCLUDE_FILE("unistd.h"  HAVE_UNISTD_H)
 IF(NOT HAVE_UNISTD_H)
   SET(YY_NO_UNISTD_H TRUE)
 ENDIF()
+
+add_definitions(-DHAVE_ALLOCA) # mingw hack
 
 CHECK_INCLUDE_FILE("alloca.h"  HAVE_ALLOCA_H)
 CHECK_INCLUDE_FILE("malloc.h"    HAVE_MALLOC_H)
